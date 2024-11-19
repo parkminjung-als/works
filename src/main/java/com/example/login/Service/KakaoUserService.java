@@ -9,25 +9,23 @@ import com.example.login.repository.UserRepository;
 
 @Service
 public class KakaoUserService {
-private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public KakaoUserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public User registerKakaoUser(String kakaoId, String email, String nickname) {
-        // 이미 등록된 사용자인지 확인
-        Optional<User> existingUser = userRepository.findByKakaoId(kakaoId);
+    public User registerUser(String platformId, String email, String name, String provider) {
+        Optional<User> existingUser = userRepository.findByPlatformId(platformId);
         if (existingUser.isPresent()) {
-            return existingUser.get(); // 이미 등록된 사용자 반환
+            return existingUser.get();
         }
 
-        // 새로운 카카오 사용자 저장
         User user = new User();
-        user.setKakaoId(kakaoId);
+        user.setPlatformId(platformId); // 카카오 또는 네이버 ID 저장
         user.setEmail(email);
-        user.setName(nickname);
-        user.setProvider("KAKAO");
+        user.setName(name);
+        user.setProvider(provider); // KAKAO 또는 NAVER
         user.setStatus("ACTIVE");
 
         return userRepository.save(user);
